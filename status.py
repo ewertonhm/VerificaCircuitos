@@ -11,6 +11,7 @@ import os, sys
 import txt_rw
 import base64
 from Cryptodome.Cipher import AES
+import tabulate
 
 # pip install selenium
 # maquina que executar o script PRECISA ter um navegador instalado
@@ -160,8 +161,8 @@ def verificar_caixas_atendimento(circuito):
 
 sa_site_login()
 
-
-StatusCircuitos = []
+if VerificarCA:
+    StatusCircuitos = []
 
 for circuito in Circuitos:
     print("############################ {0} ############################".format(circuito))
@@ -173,11 +174,12 @@ for circuito in Circuitos:
 
     for c in circuito:
         print(c)
-        c1 = c.split()
-        CamposCircuito.append(c1)
+        if VerificarCA:
+            c1 = c.split()
+            CamposCircuito.append(c1)
     print()
-
-    StatusCircuitos.append(CamposCircuito)
+    if VerificarCA:
+        StatusCircuitos.append(CamposCircuito)
 
 print(StatusCircuitos)
 

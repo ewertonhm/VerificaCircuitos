@@ -1,3 +1,4 @@
 selenium
 argparse
 PyCryptodomex
+tabulate

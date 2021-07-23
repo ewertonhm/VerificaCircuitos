@@ -54,7 +54,10 @@ if config.get('credentials-sa','Login') == 'usuario@redeunifique.com.br' and con
     print('Por questões de segurança, a senha deve ser primeiramente criptografada usando o script: cripto.exe')
     sys.exit()
 
+VerificarCA = False
+
 if type(CircuitosCA) is list:
+    VerificarCA = True
     if config.get('credentials-erp', 'Login') == 'usuario' and config.get('credentials-erp', 'Senha') == 'senha':
         print('Durante a execução, desse script, o mesmo irá necessitar logar no ERP para realizar consultas;')
         print('Para prosseguir, insira suas credenciais no arquivo: {0}'.format(p.absolute()))
@@ -93,13 +96,10 @@ def sa_site_login():
     driver.find_element_by_name("senha").send_keys(password)
     driver.find_element_by_id("entrar").click()
 
-# acessa a pagina status do sistema de ativação
-def go_status():
-    sa_site_login()
-    driver.get("http://ativacaofibra.redeunifique.com.br/cadastro/interno.php?pg=interno&pg1=verificacoes_onu/status")
-
 # consulta o circuito e retorna uma String com o resultado
 def verificar_circuito(circuito):
+    driver.get("http://ativacaofibra.redeunifique.com.br/cadastro/interno.php?pg=interno&pg1=verificacoes_onu/status")
+
     driver.find_element_by_name("circ").send_keys(circuito)
     driver.find_element_by_name("circ").send_keys(Keys.ENTER)
     value = None
@@ -127,13 +127,10 @@ def erp_site_login():
     driver.find_element_by_name("senha").send_keys(password)
     driver.find_element_by_class_name("btn").click()
 
-# acessa a pagina de gerencias caixa de ativação
-def go_erp_pesquisar_ca():
-    erp_site_login()
+# busca as caixas, retorna o nome delas e o link dos cadastros dos clientes
+def verificar_caixas_atendimento(circuito):
     driver.get("http://erp.redeunifique.com.br/engenharia/cm_gerenciar_caixa/")
 
-# busca as caixas, retorna o nome delas e o link dos cadastros dos clientes
-def pesquisar_circuito(circuito):
     driver.find_element_by_id("cm_caixa").send_keys('CA-'+circuito[:-1]+'-'+circuito[-1:])
     driver.find_element_by_class_name("bt-pesquisar-caixas").click()
     Rows = driver.find_elements_by_tag_name("td")
@@ -161,11 +158,39 @@ def pesquisar_circuito(circuito):
         sleep(0.5)
     return CAS
 
-go_status()
+sa_site_login()
+
+
+StatusCircuitos = []
+
 for circuito in Circuitos:
     print("############################ {0} ############################".format(circuito))
-    print(verificar_circuito(circuito))
+    sc = verificar_circuito(circuito)
+    circuito = sc.splitlines()
+    circuito.pop(0)
+
+    CamposCircuito = []
+
+    for c in circuito:
+        print(c)
+        c1 = c.split()
+        CamposCircuito.append(c1)
     print()
+
+    StatusCircuitos.append(CamposCircuito)
+
+print(StatusCircuitos)
+
+if VerificarCA:
+    erp_site_login()
+    for circuito in CircuitosCA:
+        counter = 1
+        cas = verificar_caixas_atendimento(circuito)
+        for ca in cas[0]:
+            print(ca)
+            for cliente in cas[counter]:
+                print(cliente)
+        counter = counter + 1
 
 driver.quit()
 driver = None

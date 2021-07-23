@@ -19,6 +19,10 @@ def write_to_file(string):
         file_object.write(string)
 
 def empty_credentials():
-    write_to_file('[credentials]')
+    write_to_file('[credentials-sa]')
     write_to_file('Login:usuario@redeunifique.com.br')
+    write_to_file('Senha:senha')
+    write_to_file('')
+    write_to_file('[credentials-erp]')
+    write_to_file('Login:usuario')
     write_to_file('Senha:senha')

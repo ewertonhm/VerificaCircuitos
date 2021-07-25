@@ -22,7 +22,7 @@ init(convert=True)
 
 
 # configurações do parser, responsável por receber os parâmetros na hora de rodar o script
-parser = argparse.ArgumentParser(description='Verifica status dos circuitos no Sistema de Ativação.')
+parser = argparse.ArgumentParser(description='Verifica status dos circuitos no Sistema de Ativação e lista separando por caixa de atendimento.\r\n Criado por Ewerton H. Marschalk')
 parser.add_argument('-c', '--circuito', required=True)
 args = parser.parse_args()
 
@@ -109,7 +109,7 @@ def verificar_circuito(circuito):
         driver.find_element_by_name("pesquisar").click()
         value = driver.find_element_by_id("maintable").text
     except:
-        value = "Não foi encontrado o circuito: {0}".format(circuito)
+        value = True
     return value
 
 
@@ -181,73 +181,76 @@ sa_site_login()
 # para cada circuito na lista Circuitos,
 # pega as informações do
 sc = verificar_circuito(Circuito)
-circuito = sc.splitlines()
-Header = circuito[0]
-circuito.pop(0)
+if sc:
+    print(colored("Circuito não encontrado ou não existem ONUs cadastradas nesse circuito.", 'grey', attrs=['bold']))
+else:
+    circuito = sc.splitlines()
+    Header = circuito[0]
+    circuito.pop(0)
 
-CamposCircuito = []
+    CamposCircuito = []
 
-for c in circuito:
-    c1 = c.split()
-    CamposCircuito.append(c1)
+    for c in circuito:
+        c1 = c.split()
+        CamposCircuito.append(c1)
 
-StatusCircuitos.append(CamposCircuito)
+    StatusCircuitos.append(CamposCircuito)
 
-erp_site_login()
+    erp_site_login()
 
-counter = 1
-cas = verificar_caixas_atendimento(Circuito)
-for ca in cas[0]:
-    CAs.append(ca)
-    ClientesCAs.append(cas[counter])
-    counter = counter + 1
+    counter = 1
+    cas = verificar_caixas_atendimento(Circuito)
+    for ca in cas[0]:
+        CAs.append(ca)
+        ClientesCAs.append(cas[counter])
+        counter = counter + 1
 
-counter = 0
+    counter = 0
 
-Header = Header.split()
+    Header = Header.split()
 
-for ca in CAs:
-    print("##################################################### {0} #####################################################".format(ca))
-    print(colored("{0:16s} | {1:2s} | {2:9s} | {3:12s} | {4} {5} | {6} {7:6s} | {8} {9} | {10} {11}".format(Header[0],Header[1],Header[2],Header[3],Header[4],Header[5],Header[6],Header[7],Header[8],Header[9],Header[10],Header[11]), 'grey', attrs=['bold']))
-    for c in ClientesCAs[counter]:
-        for cs in StatusCircuitos[0]:
-            if c == cs[4]:
-                if cs[2] == 'working':
-                    print(
-                        "{0:16s} | {1:2s} | {2:9s} | {3:12s} | {4:14s} | {5:12s} | {6:10} | {7}-{8}".format(cs[0],
-                                                                                                            cs[1],
-                                                                                                            cs[2],
-                                                                                                            cs[3],
-                                                                                                            cs[4],
-                                                                                                            cs[5],
-                                                                                                            cs[6],
-                                                                                                            cs[7],
-                                                                                                            cs[8]))
-                elif cs[2] == 'LOS':
-                    print(colored(
-                        "{0:16s} | {1:2s} | {2:9s} | {3:12s} | {4:14s} | {5:12s} | {6:10} | {7}-{8}".format(cs[0],
-                                                                                                            cs[1],
-                                                                                                            cs[2],
-                                                                                                            cs[3],
-                                                                                                            cs[4],
-                                                                                                            cs[5],
-                                                                                                            cs[6],
-                                                                                                            cs[7],
-                                                                                                            cs[8]),
-                        'red'))
-                else:
-                    print(colored(
-                        "{0:16s} | {1:2s} | {2:9s} | {3:12s} | {4:14s} | {5:12s} | {6:10} | {7}-{8}".format(cs[0],
-                                                                                                            cs[1],
-                                                                                                            cs[2],
-                                                                                                            cs[3],
-                                                                                                            cs[4],
-                                                                                                            cs[5],
-                                                                                                            cs[6],
-                                                                                                            cs[7],
-                                                                                                            cs[8]),
-                        'yellow'))
-    counter = counter + 1
+    for ca in CAs:
+        print("##################################################### {0} #####################################################".format(ca))
+        print(colored("{0:16s} | {1:2s} | {2:9s} | {3:12s} | {4} {5} | {6} {7:6s} | {8} {9} | {10} {11}".format(Header[0],Header[1],Header[2],Header[3],Header[4],Header[5],Header[6],Header[7],Header[8],Header[9],Header[10],Header[11]), 'grey', attrs=['bold']))
+        for c in ClientesCAs[counter]:
+            for cs in StatusCircuitos[0]:
+                if c == cs[4]:
+                    if cs[2] == 'working':
+                        print(
+                            "{0:16s} | {1:2s} | {2:9s} | {3:12s} | {4:14s} | {5:12s} | {6:10} | {7}-{8}".format(cs[0],
+                                                                                                                cs[1],
+                                                                                                                cs[2],
+                                                                                                                cs[3],
+                                                                                                                cs[4],
+                                                                                                                cs[5],
+                                                                                                                cs[6],
+                                                                                                                cs[7],
+                                                                                                                cs[8]))
+                    elif cs[2] == 'LOS':
+                        print(colored(
+                            "{0:16s} | {1:2s} | {2:9s} | {3:12s} | {4:14s} | {5:12s} | {6:10} | {7}-{8}".format(cs[0],
+                                                                                                                cs[1],
+                                                                                                                cs[2],
+                                                                                                                cs[3],
+                                                                                                                cs[4],
+                                                                                                                cs[5],
+                                                                                                                cs[6],
+                                                                                                                cs[7],
+                                                                                                                cs[8]),
+                            'red'))
+                    else:
+                        print(colored(
+                            "{0:16s} | {1:2s} | {2:9s} | {3:12s} | {4:14s} | {5:12s} | {6:10} | {7}-{8}".format(cs[0],
+                                                                                                                cs[1],
+                                                                                                                cs[2],
+                                                                                                                cs[3],
+                                                                                                                cs[4],
+                                                                                                                cs[5],
+                                                                                                                cs[6],
+                                                                                                                cs[7],
+                                                                                                                cs[8]),
+                            'yellow'))
+        counter = counter + 1
 
 driver.quit()
 driver = None

@@ -11,6 +11,7 @@ import base64
 from Cryptodome.Cipher import AES
 from colorama import init, Fore, Back, Style
 from termcolor import colored
+from pprint import pprint
 
 # initialize colorama
 init(convert=True)
@@ -23,7 +24,7 @@ init(convert=True)
 
 
 # configurações do parser, responsável por receber os parâmetros na hora de rodar o script
-parser = argparse.ArgumentParser(description='Verifica status dos circuitos no Sistema de Ativação.')
+parser = argparse.ArgumentParser(description='Verifica status dos circuitos no Sistema de Ativação.\r\n Criado por Ewerton H. Marschalk')
 parser.add_argument('-c', '--circuito', nargs='+', required=True)
 args = parser.parse_args()
 
@@ -103,7 +104,7 @@ def verificar_circuito(circuito):
         driver.find_element_by_name("pesquisar").click()
         value = driver.find_element_by_id("maintable").text
     except:
-        value = "Não foi encontrado o circuito: {0}".format(circuito)
+        value = True
     return value
 
 
@@ -115,30 +116,34 @@ sa_site_login()
 for circuito in Circuitos:
     print(colored("##################################################### {0} #####################################################".format(circuito)))
     sc = verificar_circuito(circuito)
-    circuito = sc.splitlines()
-    Header = circuito[0].split()
-    circuito.pop(0)
-    print(colored("{0:16s} | {1:2s} | {2:9s} | {3:12s} | {4} {5} | {6} {7:6s} | {8} {9} | {10} {11}".format(Header[0],Header[1],Header[2],Header[3],Header[4],Header[5],Header[6],Header[7],Header[8],Header[9],Header[10],Header[11]), 'grey', attrs=['bold']))
+    if circuito:
+        print(colored("Circuito não encontrado ou não existem ONUs cadastradas nesse circuito.", 'grey', attrs=['bold']))
+    else:
+        circuito = sc.splitlines()
+        Header = circuito[0].split()
+        circuito.pop(0)
 
-    for c in circuito:
-        cs = c.split()
-        if cs[2] == 'working':
-            print(
-                "{0:16s} | {1:2s} | {2:9s} | {3:12s} | {4:14s} | {5:12s} | {6:10} | {7}-{8}".format(cs[0], cs[1], cs[2],
-                                                                                                    cs[3], cs[4], cs[5],
-                                                                                                    cs[6], cs[7], cs[8]))
-        elif cs[2] == 'LOS':
-            print(colored(
-                "{0:16s} | {1:2s} | {2:9s} | {3:12s} | {4:14s} | {5:12s} | {6:10} | {7}-{8}".format(cs[0], cs[1], cs[2],
-                                                                                                    cs[3], cs[4], cs[5],
-                                                                                                    cs[6], cs[7], cs[8]), 'red'))
-        else:
-            print(colored(
-                "{0:16s} | {1:2s} | {2:9s} | {3:12s} | {4:14s} | {5:12s} | {6:10} | {7}-{8}".format(cs[0], cs[1], cs[2],
-                                                                                                    cs[3], cs[4], cs[5],
-                                                                                                    cs[6], cs[7],
-                                                                                                    cs[8]), 'yellow'))
-    print()
+        print(colored("{0:16s} | {1:2s} | {2:9s} | {3:12s} | {4} {5} | {6} {7:6s} | {8} {9} | {10} {11}".format(Header[0],Header[1],Header[2],Header[3],Header[4],Header[5],Header[6],Header[7],Header[8],Header[9],Header[10],Header[11]), 'grey', attrs=['bold']))
+
+        for c in circuito:
+            cs = c.split()
+            if cs[2] == 'working':
+                print(
+                    "{0:16s} | {1:2s} | {2:9s} | {3:12s} | {4:14s} | {5:12s} | {6:10} | {7}-{8}".format(cs[0], cs[1], cs[2],
+                                                                                                        cs[3], cs[4], cs[5],
+                                                                                                        cs[6], cs[7], cs[8]))
+            elif cs[2] == 'LOS':
+                print(colored(
+                    "{0:16s} | {1:2s} | {2:9s} | {3:12s} | {4:14s} | {5:12s} | {6:10} | {7}-{8}".format(cs[0], cs[1], cs[2],
+                                                                                                        cs[3], cs[4], cs[5],
+                                                                                                        cs[6], cs[7], cs[8]), 'red'))
+            else:
+                print(colored(
+                    "{0:16s} | {1:2s} | {2:9s} | {3:12s} | {4:14s} | {5:12s} | {6:10} | {7}-{8}".format(cs[0], cs[1], cs[2],
+                                                                                                        cs[3], cs[4], cs[5],
+                                                                                                        cs[6], cs[7],
+                                                                                                        cs[8]), 'yellow'))
+        print()
 
 
 driver.quit()

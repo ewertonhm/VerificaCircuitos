@@ -109,7 +109,7 @@ def verificar_circuito(circuito):
         driver.find_element_by_name("pesquisar").click()
         value = driver.find_element_by_id("maintable").text
     except:
-        value = True
+        value = 'error'
     return value
 
 
@@ -181,7 +181,7 @@ sa_site_login()
 # para cada circuito na lista Circuitos,
 # pega as informações do
 sc = verificar_circuito(Circuito)
-if sc:
+if sc == 'error':
     print(colored("Circuito não encontrado ou não existem ONUs cadastradas nesse circuito.", 'grey', attrs=['bold']))
 else:
     circuito = sc.splitlines()

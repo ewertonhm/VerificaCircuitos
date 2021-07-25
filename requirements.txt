@@ -2,3 +2,5 @@ selenium
 argparse
 PyCryptodomex
 tabulate
+colorama
+termcolor

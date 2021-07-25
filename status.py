@@ -116,7 +116,7 @@ sa_site_login()
 for circuito in Circuitos:
     print(colored("##################################################### {0} #####################################################".format(circuito)))
     sc = verificar_circuito(circuito)
-    if circuito == 'error':
+    if sc == 'error':
         print(colored("Circuito não encontrado ou não existem ONUs cadastradas nesse circuito.", 'grey', attrs=['bold']))
     else:
         circuito = sc.splitlines()

@@ -1,3 +1,7 @@
 /.credentials.ini
 /venv/
+/venv/*
 /build/
+/build/*
+/build/exe.win-amd64-3.9/
+/build/exe.win-amd64-3.9/lib/
